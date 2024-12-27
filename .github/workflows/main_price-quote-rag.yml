@@ -29,7 +29,6 @@ jobs:
       
       - name: Install dependencies
         run: pip install -r price-quote-rag/requirements.txt
-             pip install -U langchain-community
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
