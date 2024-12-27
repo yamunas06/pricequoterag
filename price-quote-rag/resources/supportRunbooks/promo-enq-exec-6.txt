@@ -1,0 +1,19 @@
+Till does not have enough prices to trade   
+
+Price service in the UK should have more than 700,000 prices in it's database (> 600,000 in ROI). Anything significantly less than this and the till will not be able to trade. It will report "product not found" for every product scanned.
+
+This can happen because, if price service detects corruption in a database, it will replace the database with an empty one. This has also been seen in new stores that are about to open due to problems in aqueduct.
+
+The only remedy is to pass the zendesk ticket to 156_Magic_Pipe and request a bootstrap. Make sure you provide the hostname(s) of the till/SPS. Usually the till will have a very low number of prices and should be bootstrapped immediately, specifying that the till is unusable in its current state. However, if the till does have several hundred thousand prices then it may be able to trade and so the bootstrap should be scheduled out of hours.
+
+The following query will identify the tills:
+
+index=till_sre_prod env::prod sourcetype="price-quote" host!="uk06912pxe01.ukroi.tesco.org" gtinPricesCount < 600000 | dedup host | table host, gtinPricesCount
+
+(Splunk report)
+
+
+
+
+Here is a link to the related alert:
+https://splunk-operations.ocset.net/en-GB/app/SHC_tesco_app_price-service/alert?s=%2FservicesNS%2Fgeoffrey.froud%2540tesco.com%2FSHC_tesco_app_price-service%2Fsaved%2Fsearches%2F05_price_pricequote%2520Till%2520does%2520not%2520have%2520enough%2520prices%2520to%2520trade

@@ -1,0 +1,57 @@
+What is this?
+
+This is the price csv uploader... basically, it's an interim solution to expose our pricing data.  It relies on a successful upload to S3 each day.
+
+As of 25/06/2024, there are 2 files uploaded to S3 each day.
+
+Filename	Purpose	S3
+v4-cluster-level-price-upload	Prices based on V4 prices	link
+extract-v4-price-upload	A copy of the V4 prices used for data comparison	link
+
+Only the first file is being used by our consumers at the moment.
+
+Note*: You will find additional file present fro V3 prices, these files are old and will not be updated. 
+
+How to Fix?
+
+Historically, this upload task has only failed due to a spurious Couchbase failure.  Since then, retry logic has been added to the project thus making spurious failures less common.  Therefore, it's recommended to check in splunk what the root cause is before proceeding.
+
+For PROD
+
+search index=price_service sourcetype=kube:container:price-csv-uploader "Maximum retries exceeded"
+
+For PPE
+
+search index=price_service_preprod  sourcetype="kube:container:price-csv-uploader*" "Maximum retries exceeded"
+1. Look for clues
+
+Generic search to see CSV upload logs: 
+
+For PROD
+
+index=price_service sourcetype=*price-csv-uploader* error
+
+For PPE 
+
+index=price_service_preprod  sourcetype="kube:container:price-csv-uploader*" error
+If you dont find obvious issue in the logs, re-triggering job has worked many times. To know which job to re-trigger check the uploaded files in S3.
+If you find an issue, implement the fix in price csv uploader. Deploy the fix using pipeline
+2. Analysing the CSV files
+
+The consumer may raise concerns regarding the content of the uploaded files, and it could be useful to be able to run a query over it using tools like DBeaver. Since these files are missing the column names, one would need to add them in order to query by fields. The following commands can be used to achieve this without having to open the files in an editor.
+
+echo "record_type,gtin,price,effective_date,selling_uom,reason,store_id,end_date,country_code" | cat - store-level-price-upload.csv > /tmp/tempfile && mv /tmp/tempfile store-level-price-upload.csv
+echo "record_type,gtin,price,effective_date,selling_uom,reason,location_cluster,end_date,country_code" | cat - cluster-level-price-upload.csv > /tmp/tempfile && mv /tmp/tempfile cluster-level-price-upload.csv
+3. Check status of uploaded files  in S3
+Open bucket v4-cluster-level-price-upload
+Check the date and size of the latest version. The date should be today. The size should match the previous versions.
+Does it look good okay? Did you find anything obvious in logs? If not rerun the job.
+4. Re-trigger the job
+To re-trigger the job, you'll manually edit the cron schedule found here. The should be committed directly to the master branch. (Please consider time difference when change the cron job time. It is one hour earlier than your system clock during summer).
+Deploy the change using pipeline
+Check the uploaded files in s3 after the job has completed successfully
+```
+index=price_service price-csv-uploader
+```
+Check if the file was uploaded correctly to s3
+Revert the changes after successful run.

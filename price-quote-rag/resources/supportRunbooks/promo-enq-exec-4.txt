@@ -1,0 +1,35 @@
+A deposit charge is being made for a product and it shouldn't be
+
+
+There are a number of diagnosis steps to determine why a deposit charge is being made when it shouldn't be.
+
+Is there a deposit charge for this product in price service central?
+Look at the full price document in the Support Tool (Price Enquiry/Full Model). Is there a deposit section?
+
+If no, then it shouldn't be possible for a charge to be made in store. Double-check with the store that a charge is applying. If confirmed, raise this with Price Enquiry.
+
+
+If yes, lookup the product data on the Product page of the Support Tool (Products/GTIN).
+Are the flags set correctly for DRS? The DRS data can be found at the bottom of all the product data. The data is different for SINGLE and MULTIPACK products.
+SINGLE product:
+
+MULTIPACK product:
+
+The examples above show a product that is part of the DRS scheme. For a product that isn't part of the scheme, this data will either be missing or one or more flags will be false.
+
+
+If the product data indicates this product is part of DRS then send the zendesk ticket to Product API (04_Product_Strat_Build_Entp) and ask them to check whether this product should be part of the DRS scheme.
+
+
+If the product data indicates this product is not part of DRS but we have DRS data in the price document, and this DRS data has no endDate, then this DRS data needs to be withdrawn. Follow the instructions here to withdraw the DRS data.
+
+
+If the DRS data already has an endDate then it has been withdrawn already. Has the endDate been reached already? When DRS data is withdrawn, the endDate is set to midnight of the next day so DRS charges will still be made for the remainder of the current day. Once the endDate is reached, DRS charges will no longer be applied. If the endDate has not yet been reached then no further action is needed. Close the zendesk ticket indicating that DRS charges will not be applied tomorrow.
+
+
+If the endDate has been reached but DRS charges are still being applied in store then check whether the endDate has reached the store. Use this Jenkins job to get the price from the SPS. If the DRS charges are still visible on the price then the endDate has not reached the store. The DRS data should be withdrawn again, see here.
+
+
+If the DRS charges are not visible on the SPS then ask Manned Tills (49_MannedTills_Price_UK/ROI) to check if the GTIN has a deposit charge in CBO and, if necessary, refresh the GTIN on the tills.
+
+

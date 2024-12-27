@@ -1,0 +1,32 @@
+A deposit charge is not being made for a product and it should be
+
+There are a number of diagnosis steps to determine why a deposit charge is not being made.
+
+Is there a deposit charge for this product in price service central?
+Look at the full price document in the Support Tool (Price Enquiry/Full Model). Is there a deposit section?
+
+
+
+If not, lookup the product data on the Product page of the Support Tool (Products/GTIN).
+Are the flags set correctly for DRS? The DRS data can be found at the bottom of all the product data. The data is different for SINGLE and MULTIPACK products. productType  is a new field with DRS, so it's also possible that the field isn't set at all (would also hint towards a product missing DRS fields)
+
+SINGLE product:
+
+
+MULTIPACK product:
+
+
+
+If the product data looks good but the deposit is missing from the full price document then use the "Republish DRS Deposit" button on the maintenance page of the Support Tool. This will create the deposit data in price service. Note that there is a 5 minute cache so it may take 5 minutes before it appears in the Support Tool. 
+
+Warning: As of 23 Feb 2024 , republishing DRS data through Supportal will take effect immediately on Tesco Till / GHS, but not until the next day for Interim tills. We should avoid this inconsistency by restricting republishing to after 10pm.
+
+
+If the product data does not look correct then send the zendesk ticket to Product API (04_Product_Strat_Build_Entp) and ask them to check whether this product should be part of the DRS scheme.
+
+
+If the DRS data is present in the full price document then perhaps the data is missing from one particular till. It is expected that this would be mentioned on the zendesk ticket, i.e. deposit not being charged on till lane 51.
+
+In this case, you can use the same "Republish DRS Deposit" button on the maintenance page of the Support Tool. Then wait ~1h and check if the issue is fixed.
+
+

@@ -1,0 +1,37 @@
+
+Please check both the cancelled section and the withdrawn section because that alert may be caused by either.
+
+N.B. If the below searches return nothing, then the alert was a false positive and can be closed with no further action.
+
+Cancelled prices
+
+If for some reason, when a cancellation event was received, the corresponding price item was not deleted then the price item can be manually deleted.
+
+
+
+These can be found with the following Splunk query:
+
+earliest=-1d@d+12h latest=now index=price_service sourcetype="kube:container:promo-config*" 
+message="price document not found in repository" operation="cancellation" AND messageType!="PRICE_CUT_*" | dedup price_id | table price_id
+
+This provides the list of entity ids to be deleted. These can be downloaded from splunk into a file. Edit the file to remove the header line and the quotes.
+
+When it is safe and when it is not safe to delete a cancelled price
+
+Cancelled regular prices that are received between midday yesterday and midday today are safe to delete today, up until midnight. After that, they are no longer safe to delete. This is because those prices could become effective at midnight and after that the previous regular price could get deleted from the price document. This means that if you deleted the cancelled price then, there would be no active price for the product and it can no longer be sold online or on Tesco tills, and if the situation persisted for 24 hours then it couldn't be sold on interim tills as well.
+
+Note that it is always safe to delete a clearance or a price cut at any time because there will always be a regular price to fall back on. However, it should be noted that deleting a clearance after it has become effective could lead to the stores having incorrect labels.
+
+Running the delete script
+
+The script can be found here: https://github.dev.global.tesco.org/TescoPriceService/Price-Enquiry-Scripts/blob/main/utility-scripts/runForceDeleteByEntityID.py
+
+Get the Promo Config Consumer credentials from the key vault: https://portal.azure.com/#@tescoazure.onmicrosoft.com/asset/Microsoft_Azure_KeyVault/Secret/https://eun-prod-005-pqu-kv.vault.azure.net/secrets/pcc-identity-clientid
+
+Add the credentials to the script in the placeholders.
+
+Add the name of the file, which contains the entity ids to be deleted, to the script.
+
+Run the script from the command line using python3:
+
+python3 runForceDeleteByEntityID.py

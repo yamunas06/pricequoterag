@@ -1,0 +1,13 @@
+langchain
+langchain-community
+langchain-huggingface
+chromadb
+sentence-transformers
+ollama
+promptflow
+promptflow-tools
+requests
+beautifulsoup4
+selenium
+atlassian-python-api
+langchain-chroma

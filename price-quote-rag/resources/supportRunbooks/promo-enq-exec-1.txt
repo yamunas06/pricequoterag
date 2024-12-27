@@ -1,0 +1,4 @@
+Bakery labels or loose produce labels do not match shelf-edge labels
+
+Many bakery goods use embedded barcodes, that is a barcode that has the price embedded within it. The labels that are stuck on the product are printed in-store, for large stores, or printed at a bakery hub, for Express stores. If these labels have an out-of-date price and do not match the shelf-edge labels then this could indicate that the counter-scales-adapter that runs on the SPS needs to be restarted. This adapter feeds prices to the bakery label printer and the scales in the fresh produce aisles.
+In this case, send the ticket to 26_Retail_Colleague_Devices_PCScales.
